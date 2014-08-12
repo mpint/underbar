@@ -68,30 +68,30 @@ var _ = {
       return (isFunc ? method : value[method]).apply(value, args);
     });
   },
-  each: function (obj,callback) {  
+  each: function (obj,callback,thisObj) {  
 	// Arrays
 	if (obj && typeof obj === 'object' && obj.constructor === Array) {
 		for (var i = 0; i < obj.length; i++) {
-			callback(obj[i],i,obj);
+			callback.call(thisObj,obj[i],i,obj);
 		}
 	}
 	// Objects
 	else if (obj && typeof obj === 'object' && obj.constructor === Object) {
 		for (var i in obj) {
-			callback(obj[i], i, obj);
+			callback.call(thisObj, obj[i], i, obj);
 		}
 	}
   },
-  map: function () {
+  map: function (obj,callback,thisObj) {
 	var results = [];
 	for (var i = 0; i < arguments[0].length; i++) {
-		results.push( arguments[1](arguments[0][i]) );
+		results.push( callback.call(thisObj,arguments[0][i]) );
 	}
 	return results;
   },
   reduce: function (array,cb,base) {
   
-	if (arguments.length === 2) {
+	if (arguments.length < 3) {
 		base = array[0]; 
 	} 
 	_.each(array, function (current) {
@@ -100,7 +100,8 @@ var _ = {
 	return base;
   },
   filter: function(obj, callback, thisObj) { // this = thisObj; callback = filter callback that returns Boolean -- passes filter if callback returns true
-    var results = [];
+    console.log('filter ',obj);
+	var results = [];
     if (obj == null) return results;
     if (Array.prototype.filter && obj.filter === Array.prototype.filter) return obj.filter(callback, thisObj);
     _.each(obj, function(value, index, list) {
@@ -172,16 +173,58 @@ var _ = {
 	return (results.length === objLen ? true : false);
   },
   some: function (obj,callback,thisObj) {
+	callback = callback || _.identity;
 	var results, strTest = 0;
-	if (obj.length === 0 || obj.length === undefined || callback === undefined) {return false;}
+	if (obj.length === 0 || obj.length === undefined || callback === undefined) {console.log('---','epic fail','---');return false;}
 	results = _.filter(obj,callback,thisObj);
-	if (results.length > 0) { 
+	console.log('results ',results);
+	if (results.length > 0) {
+console.log('PASS');	
+		console.log('------------');
 		return true; 
 	} else if (results.length === 0) {
-		_.each(obj,function(value,index,list){console.log(value);});
-	} else { return false; }
+	console.log('NO');
+			console.log('------------');
+		return false;
+	}
   },
+  shuffle: function(array) {
+    var randNum,
+    index = 0,
+    newArray = [];
+	
+    each(array, function(value) {
+	
+      randNum = _.random(index++); // make a random number and iterate index
+	console.log(randNum);  
+      newArray[index - 1] = newArray[randNum]; 
+    
+	  newArray[randIndex] = value;  // pushes array value to random place in newArray
+	  
+	console.log('newArray',newArray);
+    });
+    return newArray;
+  },
+  defaults: function(newObj) { // newObj is object that represents default properties, which are not updated by elem
+    
+	each(slice.call(arguments, 1), function(elem) {
+      if (elem) { // tests whether any additional objects were passed
+	  
+        for (var property in elem) {
+		
+          if (newObj[property] === undefined) {
+			newObj[property] = elem[property]; // copies elem properties to newObj props
+		  }
+        }
+      }
+    });
+	
+    return newObj;
+  },
+  
+  
 };
+
 //////////////////////////////////////////
 describe('identity', function() {
   var uniqueObject = {};
