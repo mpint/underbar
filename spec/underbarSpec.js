@@ -193,7 +193,7 @@ console.log('PASS');
     index = 0,
     newArray = [];
 	
-    each(array, function(value) {
+    _.each(array, function(value) {
 	
       randNum = _.random(index++); // make a random number and iterate index
 	console.log(randNum);  
@@ -207,7 +207,7 @@ console.log('PASS');
   },
   defaults: function(newObj) { // newObj is object that represents default properties, which are not updated by elem
     
-	each(slice.call(arguments, 1), function(elem) {
+	_.each(Array.prototype.slice.call(arguments, 1), function(elem) {
       if (elem) { // tests whether any additional objects were passed
 	  
         for (var property in elem) {
@@ -221,8 +221,36 @@ console.log('PASS');
 	
     return newObj;
   },
+  once: function (func) { // closure allows us to save value of hasRun
+	var hasRun = false, result;
+	return function () {
+		if (hasRun) {return result;}
+		result = func.apply(arguments) // use apply for arguments pseudo - array
+		hasRun = true;
+		func = null; // destroy the function
+		return result;
+	}
+  },
+  memoize: function (func) {
   
-  
+  var memo = {};
+	console.log(memo);
+  return function() {
+    var args = Array.prototype.slice.call(arguments);
+
+    if (args in memo)
+      return memo[args];
+    else
+      return memo[args] = func.apply(this, args);
+
+  }
+},
+delay: function(func, delay) {
+    var args = Array.prototype.slice.call(arguments,2);
+    return setTimeout(function(){ 
+		return func.apply(this, args); 
+	}, delay);
+  }
 };
 
 //////////////////////////////////////////
