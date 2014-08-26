@@ -189,21 +189,25 @@ console.log('PASS');
 	}
   },
   shuffle: function(array) {
-    var randNum,
+    var randNum = 0,
     index = 0,
     newArray = [];
 	
     _.each(array, function(value) {
-	
-      randNum = _.random(index++); // make a random number and iterate index
-	console.log(randNum);  
+
+      randNum = _.random( index++ ); // make a random number and iterate index
+
       newArray[index - 1] = newArray[randNum]; 
     
-	  newArray[randIndex] = value;  // pushes array value to random place in newArray
+	  newArray[randNum] = value;  // pushes array value to random place in newArray
 	  
 	console.log('newArray',newArray);
     });
     return newArray;
+  },
+  random: function (max) { // rand int between zero and max 
+  
+	return Math.floor( Math.random() * (max + .9) );
   },
   defaults: function(newObj) { // newObj is object that represents default properties, which are not updated by elem
     
